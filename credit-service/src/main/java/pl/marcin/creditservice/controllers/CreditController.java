@@ -24,7 +24,7 @@ public class CreditController {
     }
 
     @PostMapping(path = "CreateCredit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Long createCredit(@NonNull @RequestBody String creditName,
+    public String createCredit(@NonNull @RequestBody String creditName,
                                @NonNull @RequestBody Customer customer,
                                @NonNull @RequestBody Product product) {
         return creditService.createCredit(creditName, product, customer);
