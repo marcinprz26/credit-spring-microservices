@@ -20,17 +20,17 @@ public class Customer {
     private String lastName;
 
     @Column(length = 11, nullable = false)
-    private int pesel;
+    private Long pesel;
 
     public Customer() {}
 
-    public Customer(String firstName, String lastName, int pesel) {
+    public Customer(String firstName, String lastName, Long pesel) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.pesel = pesel;
     }
 
-    public Customer(String id, String firstName, String lastName, int pesel) {
+    public Customer(String id, String firstName, String lastName, Long pesel) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -61,11 +61,11 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public int getPesel() {
+    public Long getPesel() {
         return pesel;
     }
 
-    public void setPesel(int pesel) {
+    public void setPesel(Long pesel) {
         this.pesel = pesel;
     }
 }
