@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import pl.marcin.creditservice.models.Credit;
 
 @Repository
-public interface CreditRepository extends CrudRepository<Credit, Long> {
+public interface CreditRepository extends CrudRepository<Credit, String> {
 }

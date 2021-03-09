@@ -1,41 +1,26 @@
 package pl.marcin.creditservice.models;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "product")
 public class Product {
 
-    @Id
-    @Column(name = "credit_id")
-    private Long id;
-
-    @Column(length = 150, nullable = false)
+    private String id;
     private String name;
-
-    @Column(length = 10)
     private BigDecimal value;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "credit_id")
-    private Credit credit;
 
     public Product() {}
 
-    public Product(Long id, String name, BigDecimal value, Credit credit) {
+    public Product(String id, String name, BigDecimal value) {
         this.id = id;
         this.name = name;
         this.value = value;
-        this.credit = credit;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,13 +38,5 @@ public class Product {
 
     public void setValue(BigDecimal value) {
         this.value = value;
-    }
-
-    public Credit getCredit() {
-        return credit;
-    }
-
-    public void setCredit(Credit credit) {
-        this.credit = credit;
     }
 }
