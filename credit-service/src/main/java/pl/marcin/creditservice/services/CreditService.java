@@ -1,6 +1,7 @@
 package pl.marcin.creditservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,7 +14,11 @@ import pl.marcin.creditservice.models.Product;
 import pl.marcin.creditservice.reposotories.CreditRepository;
 import reactor.core.publisher.Mono;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CreditService {
@@ -23,8 +28,10 @@ public class CreditService {
 
     private final CreditRepository creditRepository;
 
-    private static final String PRODUCT_SERVICE_URI = "";
-    private static final String CUSTOMER_SERVICE_URI = "";
+    @Value("${service.uri.product}")
+    private String productUri;
+    @Value("${service.uri.customer}")
+    private String customerUri;
 
     @Autowired
     public CreditService(CreditRepository creditRepository) {
@@ -35,19 +42,25 @@ public class CreditService {
         return (List<Credit>) creditRepository.findAll();
     }
 
-    public Long createCredit(String creditName, Product product, Customer customer) {
+    public String createCredit(String creditName, Product product, Customer customer) {
         if(creditName.isBlank() || product == null || customer == null) {
             throw new ParameterValidationException();
         }
+        String creditId = UUID.randomUUID().toString();
+
+        product.setId(creditId);
         createProduct(product);
+
+        customer.setId(creditId);
         createCustomer(customer);
-        Credit credit = creditRepository.save(new Credit(creditName));
+
+        Credit credit = creditRepository.save(new Credit(creditId, creditName));
 
         return credit.getId();
     }
 
     private void createProduct(Product product) {
-        webClientBuilder.build().post().uri(PRODUCT_SERVICE_URI + "/CreateProduct")
+        webClientBuilder.build().post().uri(productUri + "/CreateProduct")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(Mono.just(product), Product.class)
             .retrieve()
@@ -57,7 +70,7 @@ public class CreditService {
     }
 
     private void createCustomer(Customer customer) {
-        webClientBuilder.build().post().uri(CUSTOMER_SERVICE_URI + "/CreateCustomer")
+        webClientBuilder.build().post().uri(customerUri + "/CreateCustomer")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(Mono.just(customer), Customer.class)
             .retrieve()
