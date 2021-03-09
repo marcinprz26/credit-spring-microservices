@@ -1,12 +1,14 @@
 package pl.marcin.creditservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import pl.marcin.creditservice.models.Credit;
 import pl.marcin.creditservice.models.Customer;
 import pl.marcin.creditservice.models.Product;
+import pl.marcin.creditservice.services.CreditService;
 
 import java.util.List;
 
@@ -14,17 +16,17 @@ import java.util.List;
 public class CreditController {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private CreditService creditService;
 
-    @GetMapping(name = "GetCredits")
+    @GetMapping(path = "GetCredits", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Credit> getCredits() {
-        return List.of();
+        return creditService.getAllCredits();
     }
 
-    @PostMapping(name = "CreateCredit")
-    public Credit createCredit(@NonNull @RequestBody String creditName,
+    @PostMapping(path = "CreateCredit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Long createCredit(@NonNull @RequestBody String creditName,
                                @NonNull @RequestBody Customer customer,
                                @NonNull @RequestBody Product product) {
-        return new Credit();
+        return creditService.createCredit(creditName, product, customer);
     }
 }
