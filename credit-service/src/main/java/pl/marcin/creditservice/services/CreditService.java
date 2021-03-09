@@ -2,6 +2,7 @@ package pl.marcin.creditservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CreditService {
@@ -39,7 +41,11 @@ public class CreditService {
     }
 
     public List<Credit> getAllCredits() {
-        return (List<Credit>) creditRepository.findAll();
+        List<Credit> credits = (List<Credit>) creditRepository.findAll();
+        String[] creditNumbers = credits.stream().map(Credit::getId).toArray(String[]::new);
+
+
+        return credits;
     }
 
     public String createCredit(String creditName, Product product, Customer customer) {
@@ -77,5 +83,23 @@ public class CreditService {
             .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new ParameterValidationException()))
             .bodyToMono(Customer.class)
             .block();
+    }
+
+    private List<Product> getProducts(String[] creditNumbers) {
+        return webClientBuilder.build().get().uri(productUri + "/GetProducts/" + creditNumbers)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new ParameterValidationException()))
+                .bodyToMono(new ParameterizedTypeReference<List<Product>>() {})
+                .block();
+    }
+
+    private List<Customer> getCustomer(String[] creditNumbers) {
+        return webClientBuilder.build().get().uri(customerUri + "/GetCustomers/" + creditNumbers)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new ParameterValidationException()))
+                .bodyToMono(new ParameterizedTypeReference<List<Customer>>() {})
+                .block();
     }
 }
