@@ -1,9 +1,12 @@
 package pl.marcin.creditservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 
 public class Product {
 
+    @JsonIgnore
     private String id;
     private String name;
     private BigDecimal value;

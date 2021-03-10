@@ -1,7 +1,10 @@
 package pl.marcin.creditservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Customer {
 
+    @JsonIgnore
     private String id;
     private String firstName;
     private String lastName;
